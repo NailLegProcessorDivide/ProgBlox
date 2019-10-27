@@ -29,7 +29,7 @@ private:
 		uint32_t type;
 		uint16_t moduleType[2];
 	};
-	const int numParameters;
+	int numParameters;
 	std::vector<uint32_t> paramTypes;;
 	std::vector<int> parameters;//stack frame index
 
@@ -41,11 +41,17 @@ public:
 	const uint32_t getParamType(int i);
 	Variable& getVariable(int i);
 	const int getNumSubBlocks();
+	Block* getSubBlock();
 
 };
 
-class Function {
-
+class Function : public Block {
+private:
+	std::vector<Block*> blocks;//used when run but can't be seen when recursing over blocks
+	int numblocks;
+public:
+	bool run(RuntimeState& rt);
+	Block* getBlock(int index);
 };
 
 class StackFrame {
