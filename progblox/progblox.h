@@ -2,18 +2,23 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
 
 class Variable;
 class Block;
 class Function;
 class RuntimeState;
 
-class Variable {
-private:
+class VariableBase {
 	union {
 		uint32_t type;
 		uint16_t moduleType[2];
 	};
+};
+
+class Variable {
+private:
+	VariableBase* varBase;
 	void* value;
 	bool constant;
 public:
@@ -23,19 +28,25 @@ public:
 	std::string toString();
 };
 
-class Block {
-private:
+struct BlockBase {
+public:
 	union {
 		uint32_t type;
 		uint16_t moduleType[2];
 	};
 	int numParameters;
-	std::vector<uint32_t> paramTypes;;
-	std::vector<int> parameters;//stack frame index
+	std::vector<uint32_t> paramTypes;
+};
+
+class Block {
+private:
+	BlockBase* blockBase;
+	std::vector<Variable> parameters;
 
 	std::vector<Block*> subBlocks;
 	int numSubBlocks;
 public:
+	Block();
 	virtual bool run(RuntimeState& rt);
 	const int getNumParams();
 	const uint32_t getParamType(int i);
@@ -52,11 +63,12 @@ private:
 public:
 	bool run(RuntimeState& rt);
 	Block* getBlock(int index);
+	const int getNumBlocks();
 };
 
 class StackFrame {
 public:
-	std::vector<Variable> variables;
+	std::vector<Variable> varBase;
 };
 
 class RuntimeState {
@@ -65,5 +77,14 @@ private:
 	std::vector<int> stackFrame;
 	std::vector<Variable> globalVariables;
 public:
+
+};
+
+class BlockLibrary {
+private:
+	std::map<uint16_t, Variable> variables;
+};
+
+class ProgBlox {
 
 };
