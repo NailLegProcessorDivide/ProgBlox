@@ -76,13 +76,15 @@ private:
 	std::vector<StackFrame> stackFrames;
 	std::vector<int> stackFrame;
 	std::vector<Variable> globalVariables;
+	std::vector<int> PC;
 public:
 
 };
 
 class BlockLibrary {
 private:
-	std::map<uint16_t, Variable> variables;
+	std::map<uint16_t, VariableBase> variables;
+	std::map<uint16_t, BlockBase> blocks;
 };
 
 class ProgBlox {
